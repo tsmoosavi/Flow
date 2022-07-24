@@ -1,8 +1,9 @@
-package com.example.flow
+package com.example.flow.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.flow.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

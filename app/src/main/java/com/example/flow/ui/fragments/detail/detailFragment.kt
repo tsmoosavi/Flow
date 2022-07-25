@@ -1,26 +1,23 @@
-package com.example.flow.ui.fragments.home
+package com.example.flow.ui.fragments.detail
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.flow.R
-import com.example.flow.databinding.FragmentHomeBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.example.flow.databinding.FragmentDetailBinding
 
-@AndroidEntryPoint
-class HomeFragment:Fragment(R.layout.fragment_home) {
-   private var _binding: FragmentHomeBinding? = null
+class detailFragment: Fragment(R.layout.fragment_detail) {
+    private var _binding: FragmentDetailBinding? = null
 
     private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentHomeBinding.bind(view)
+        _binding = FragmentDetailBinding.bind(view)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

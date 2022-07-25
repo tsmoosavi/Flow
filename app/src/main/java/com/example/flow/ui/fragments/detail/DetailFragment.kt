@@ -5,8 +5,10 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.flow.R
 import com.example.flow.databinding.FragmentDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-class detailFragment: Fragment(R.layout.fragment_detail) {
+@AndroidEntryPoint
+class DetailFragment: Fragment(R.layout.fragment_detail) {
     private var _binding: FragmentDetailBinding? = null
 
     private val binding get() = _binding!!

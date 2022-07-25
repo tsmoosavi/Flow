@@ -1,6 +1,6 @@
 package com.example.flow.di
 
-import com.example.flow.network.ApiService
+import com.example.data.network.ApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -34,7 +34,7 @@ object RemoteAppModule {
     fun getRetrofit(gson: Gson, client: OkHttpClient): Retrofit {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl("https://woocommerce.maktabsharif.ir/wp-json/wc/v3/")
+            .baseUrl("https://picsum.photos/v2/")
             .client(client)
             .build()
         return retrofit }

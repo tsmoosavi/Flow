@@ -21,9 +21,10 @@ object RemoteAppModule {
     fun getGson(): Gson {
         val gson = GsonBuilder().create()
         return gson }
-
+    @Singleton
+    @Provides
     fun getStatus():OkHttpClient{
-        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+        val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val client = OkHttpClient.Builder().addInterceptor(logger)
             .build()
         return client
@@ -31,9 +32,9 @@ object RemoteAppModule {
 
     @Singleton
     @Provides
-    fun getRetrofit(gson: Gson, client: OkHttpClient): Retrofit {
+    fun getRetrofit(client: OkHttpClient): Retrofit {
         val retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://picsum.photos/v2/")
             .client(client)
             .build()

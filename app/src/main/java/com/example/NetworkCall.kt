@@ -1,10 +1,12 @@
 package com.example
 
+import android.util.Log
 import retrofit2.HttpException
 import retrofit2.Response
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import kotlin.math.log
 
 
 const val REQUEST_NOT_FOUND = "نتیجه یافت نشد."
@@ -37,7 +39,8 @@ abstract class NetworkCall<ResultType> {
             }
         } catch (e: HttpException) {
             e.printStackTrace()
-            Resource(Status.NETWORK_ERROR, null, NETWORK_EXCEPTION)
+            Resource(Status.NETWORK_ERROR, null,e.message())
+//            Log.d("status")
         } catch (e: ConnectException) {
             e.printStackTrace()
             Resource(Status.NETWORK_ERROR, null, NETWORK_EXCEPTION)

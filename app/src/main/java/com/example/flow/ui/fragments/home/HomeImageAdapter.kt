@@ -12,7 +12,7 @@ import com.example.flow.model.ImageItem
 class HomeImageAdapter :
     ListAdapter<ImageItem, HomeImageAdapter.ItemHolder>(ImageDiffCallback) {
 
-    inner class ItemHolder(val binding: ImageItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ItemHolder(private val binding: ImageItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(imageItem: ImageItem)= binding.apply{
             title.text = imageItem.author
             Glide.with(root)

@@ -4,7 +4,7 @@ import com.example.flow.model.ImageItem
 import retrofit2.Response
 import retrofit2.http.GET
 
-const val baseUrl = "https://picsum.photos/v2/"
+
 
 interface ApiService {
 

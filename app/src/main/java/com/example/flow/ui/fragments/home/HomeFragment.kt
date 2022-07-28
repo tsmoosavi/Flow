@@ -1,12 +1,12 @@
 package com.example.flow.ui.fragments.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.Status
+import androidx.navigation.fragment.findNavController
 import com.example.data.network.util.Cause
 import com.example.data.network.util.NetworkResult
 import com.example.flow.R
@@ -15,7 +15,6 @@ import com.example.util.gone
 import com.example.util.showToastMessage
 import com.example.util.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -30,7 +29,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
         init()
-//        valueObservation()
         clickListener()
         collects()
     }
@@ -49,11 +47,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         }
 
+
     }
 
     private fun clickListener() {
         binding.retryButton.setOnClickListener {
-            vm.requestToNetwork()
+            findNavController().navigate(R.id.action_homeFragment_to_detailFragment)
         }
     }
 
@@ -61,18 +60,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         imageRecycler.adapter = adapter
     }
 
-//    private fun valueObservation() {
-//        vm.imageList.observe(viewLifecycleOwner) {
-//            when (it.status){
-//                Status.SERVER_ERROR ->errorManager(it.message)
-//                Status.NETWORK_ERROR -> errorManager(it.message)
-//                Status.SUCCESSFUL ->{adapter.submitList(it.data)
-//                  successfulStatus()}
-//                Status.NOT_FOUND ->errorManager(it.message)
-//                Status.LOADING ->loadingStatus()
-//            }
-//        }
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

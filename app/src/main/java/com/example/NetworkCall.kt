@@ -29,10 +29,13 @@ fun handleServerRequestCode(code: Int): String {
 
 abstract class NetworkCall<ResultType> {
     suspend fun fetch(): Resource<ResultType> {
+
         return try {
+            Resource<ResultType>(Status.LOADING,null, "")
             val response = createCall()
             val massage = handleServerRequestCode(response.code())
             when {
+
                 response.isSuccessful -> Resource(Status.SUCCESSFUL, response.body(), massage)
                 massage == REQUEST_NOT_FOUND -> Resource(Status.NOT_FOUND, null, massage)
                 else -> Resource(Status.SERVER_ERROR, null, massage)
@@ -40,7 +43,6 @@ abstract class NetworkCall<ResultType> {
         } catch (e: HttpException) {
             e.printStackTrace()
             Resource(Status.NETWORK_ERROR, null,e.message())
-//            Log.d("status")
         } catch (e: ConnectException) {
             e.printStackTrace()
             Resource(Status.NETWORK_ERROR, null, NETWORK_EXCEPTION)
@@ -61,5 +63,6 @@ enum class Status {
     SERVER_ERROR,
     NETWORK_ERROR,
     SUCCESSFUL,
-    NOT_FOUND
+    NOT_FOUND,
+    LOADING
 }

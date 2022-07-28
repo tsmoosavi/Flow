@@ -31,7 +31,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun clickListener() {
         binding.retryButton.setOnClickListener {
-
+            vm.requestToNetwork()
         }
     }
 

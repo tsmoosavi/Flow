@@ -29,9 +29,7 @@ fun handleServerRequestCode(code: Int): String {
 
 abstract class NetworkCall<ResultType> {
     suspend fun fetch(): Resource<ResultType> {
-
         return try {
-            Resource<ResultType>(Status.LOADING,null, "")
             val response = createCall()
             val massage = handleServerRequestCode(response.code())
             when {

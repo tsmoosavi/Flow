@@ -9,14 +9,15 @@ import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(private val apiService: ApiService) {
 
-    suspend fun getImageList():Resource<List<ImageItem>>{
-        return object: NetworkCall<List<ImageItem>>(){
-            override suspend fun createCall():Response<List<ImageItem>>{
-              return  apiService.getImageList()
-            }
-        }.fetch()
-    }
+//    suspend fun getImageList():Resource<List<ImageItem>>{
+//        return object: NetworkCall<List<ImageItem>>(){
+//            override suspend fun createCall():Response<List<ImageItem>>{
+//              return  apiService.getImageList()
+//            }
+//        }.fetch()
+//    }
 
+    suspend fun getImageList() = apiService.getImageList()
 
 
 

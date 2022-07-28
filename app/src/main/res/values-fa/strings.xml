@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="try_again">تلاش دوباره</string>
+    <string name="default_error_message">عدم اتصال به اینترنت</string>
+
+</resources>

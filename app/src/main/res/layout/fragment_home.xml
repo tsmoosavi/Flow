@@ -34,7 +34,7 @@
         android:id="@+id/retryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/retry"
+        android:text="@string/try_again"
         android:gravity="center"
         android:textSize="@dimen/_15ssp"
         app:layout_constraintStart_toStartOf="parent"

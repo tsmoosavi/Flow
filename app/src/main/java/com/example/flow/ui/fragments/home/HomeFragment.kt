@@ -5,13 +5,18 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.Status
+import com.example.data.network.util.Cause
+import com.example.data.network.util.NetworkResult
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
 import com.example.util.gone
 import com.example.util.showToastMessage
 import com.example.util.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -25,8 +30,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
         init()
-        valueObservation()
+//        valueObservation()
         clickListener()
+        collects()
+    }
+
+    private fun collects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.imageList.collect{
+                when(it){
+                    is NetworkResult.Error -> errorManager(it.cause)
+                    is NetworkResult.Loading -> loadingStatus()
+                    is NetworkResult.Success -> {
+                        adapter.submitList(it.data)
+                        successfulStatus()
+                    }
+                }
+            }
+        }
+
     }
 
     private fun clickListener() {
@@ -39,27 +61,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         imageRecycler.adapter = adapter
     }
 
-    private fun valueObservation() {
-        vm.imageList.observe(viewLifecycleOwner) {
-            when (it.status){
-                Status.SERVER_ERROR ->errorManager(it.message)
-                Status.NETWORK_ERROR -> errorManager(it.message)
-                Status.SUCCESSFUL ->{adapter.submitList(it.data)
-                  successfulStatus()}
-                Status.NOT_FOUND ->errorManager(it.message)
-                Status.LOADING ->loadingStatus()
-            }
-        }
-    }
+//    private fun valueObservation() {
+//        vm.imageList.observe(viewLifecycleOwner) {
+//            when (it.status){
+//                Status.SERVER_ERROR ->errorManager(it.message)
+//                Status.NETWORK_ERROR -> errorManager(it.message)
+//                Status.SUCCESSFUL ->{adapter.submitList(it.data)
+//                  successfulStatus()}
+//                Status.NOT_FOUND ->errorManager(it.message)
+//                Status.LOADING ->loadingStatus()
+//            }
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-    private fun errorManager (message: String){
+    private fun errorManager (cause: Cause?){
         binding.loadingAnimation.gone()
         binding.retryButton.visible()
         binding.imageRecycler.gone()
+        val message  = if (cause?.msg.isNullOrBlank())
+            getString(cause?.msgResId ?: R.string.default_error_message)
+        else
+            cause?.msg.orEmpty()
         showToastMessage(message)
     }
 

@@ -2,5 +2,7 @@
     <string name="app_name" translatable="false">Flow</string>
     <string name="try_again">retry</string>
     <string name="default_error_message">no internet</string>
+    <string name="network_exception">http Exception</string>
+    <string name="no_result">no result</string>
 
 </resources>

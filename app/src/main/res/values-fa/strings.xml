@@ -2,5 +2,7 @@
 <resources>
     <string name="try_again">تلاش دوباره</string>
     <string name="default_error_message">عدم اتصال به اینترنت</string>
+    <string name="network_exception">لطفا اتصال اینترنت خود را چک کنید.</string>
+    <string name="no_result">نتیجه ای یافت نشد.</string>
 
 </resources>

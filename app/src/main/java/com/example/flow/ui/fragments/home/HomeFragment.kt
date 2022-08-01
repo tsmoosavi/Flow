@@ -7,14 +7,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.data.network.util.Cause
 import com.example.data.network.util.NetworkResult
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
 import com.example.util.gone
+import com.example.util.loadImage
 import com.example.util.showToastMessage
 import com.example.util.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -35,24 +39,27 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun collects() {
         viewLifecycleOwner.lifecycleScope.launch {
-            vm.imageList.collect{
-                when(it){
+            vm.imageList.collect {
+                when (it) {
                     is NetworkResult.Error -> errorManager(it.cause)
                     is NetworkResult.Loading -> loadingStatus()
                     is NetworkResult.Success -> {
                         adapter.submitList(it.data)
                         successfulStatus()
+                        binding.image.loadImage(
+                            receiver = requireContext(),
+                            data = it.data?.firstOrNull()?.downloadUrl,
+                            isCircular = true
+                        )
                     }
                 }
             }
         }
-
-
     }
 
     private fun clickListener() {
         binding.retryButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_detailFragment)
+            vm.fetchItems()
         }
     }
 
@@ -63,25 +70,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.imageRecycler.adapter = null
         _binding = null
     }
-    private fun errorManager (cause: Cause?){
+
+    private fun errorManager(cause: Cause?) {
         binding.loadingAnimation.gone()
         binding.retryButton.visible()
         binding.imageRecycler.gone()
-        val message  = if (cause?.msg.isNullOrBlank())
+        val message = if (cause?.msg.isNullOrBlank())
             getString(cause?.msgResId ?: R.string.default_error_message)
         else
             cause?.msg.orEmpty()
         showToastMessage(message)
     }
 
-    private fun loadingStatus(){
+    private fun loadingStatus() {
         binding.loadingAnimation.visible()
         binding.retryButton.gone()
         binding.imageRecycler.gone()
     }
-    private fun successfulStatus(){
+
+    private fun successfulStatus() {
         binding.loadingAnimation.gone()
         binding.retryButton.gone()
         binding.imageRecycler.visible()

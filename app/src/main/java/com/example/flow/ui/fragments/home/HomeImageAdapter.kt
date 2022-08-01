@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.flow.databinding.ImageItemBinding
 import com.example.flow.model.ImageItem
+import com.example.util.loadImage
 
 class HomeImageAdapter :
     ListAdapter<ImageItem, HomeImageAdapter.ItemHolder>(ImageDiffCallback) {
@@ -15,9 +16,7 @@ class HomeImageAdapter :
     inner class ItemHolder(private val binding: ImageItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(imageItem: ImageItem)= binding.apply{
             title.text = imageItem.author
-            Glide.with(root)
-                .load(imageItem.downloadUrl)
-                .into(image)
+            image.loadImage(receiver = root, data = imageItem.downloadUrl, isRoundedCorner = true)
         }
     }
 

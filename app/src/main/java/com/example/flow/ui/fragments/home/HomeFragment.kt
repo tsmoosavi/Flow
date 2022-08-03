@@ -12,10 +12,8 @@ import com.example.data.network.util.Cause
 import com.example.data.network.util.NetworkResult
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
-import com.example.util.gone
-import com.example.util.loadImage
-import com.example.util.showToastMessage
-import com.example.util.visible
+import com.example.flow.model.ImageItem
+import com.example.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
@@ -27,7 +25,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val vm: HomeViewModel by viewModels()
-    private val adapter: HomeImageAdapter by lazy { HomeImageAdapter() }
+    private val adapter: HomeImageAdapter by lazy {
+        HomeImageAdapter { image: ImageItem ->
+            goToDetailFragment(image)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,11 +80,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.loadingAnimation.gone()
         binding.retryButton.visible()
         binding.imageRecycler.gone()
-        val message = if (cause?.msg.isNullOrBlank())
-            getString(cause?.msgResId ?: R.string.default_error_message)
-        else
-            cause?.msg.orEmpty()
-        showToastMessage(message)
+        showErrorMessage(cause)
     }
 
     private fun loadingStatus() {
@@ -95,6 +93,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.loadingAnimation.gone()
         binding.retryButton.gone()
         binding.imageRecycler.visible()
+    }
+
+    private fun goToDetailFragment(image: ImageItem) {
+        val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(image)
+        findNavController().navigate(action)
     }
 
 }

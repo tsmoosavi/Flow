@@ -1,18 +1,12 @@
 package com.example.data.network.util
 
-import com.example.NETWORK_EXCEPTION
-import com.example.Resource
-import com.example.Status
-import com.example.flow.R
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import retrofit2.Response
-import java.net.ConnectException
 import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 
 inline fun <T> safeApiCall(
@@ -35,9 +29,7 @@ inline fun <T> safeApiCall(
         }
     } catch (e: Throwable) {
         emit(NetworkResult.Error(handleErrorException(e)))
-
     }
-
 }
 
 fun <T> FlowCollector<NetworkResult<T>>.handleErrorException(throwable: Throwable): Cause {
@@ -71,13 +63,10 @@ fun convertErrorBody(errorBody: ResponseBody?): ErrorResponse? {
 }
 
 fun <T> FlowCollector<NetworkResult<T>>.handleErrorCode(code: Int): Cause {
-    return HttpErrorTypes.values().find {
+    val errorMessage = HttpErrorTypes.values().find {
         it.code == code
-    }
-        ?.let {
-            Cause(msgResId = it.msgResId)
-        }
-        ?: Cause(msgResId = HttpErrorTypes.UNKNOWN.msgResId)
+    }?.msgResId ?: HttpErrorTypes.UNKNOWN.msgResId
+       return Cause(msgResId = errorMessage)
 }
 
 

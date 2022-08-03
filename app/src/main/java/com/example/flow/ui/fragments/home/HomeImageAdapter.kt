@@ -10,14 +10,19 @@ import com.example.flow.databinding.ImageItemBinding
 import com.example.flow.model.ImageItem
 import com.example.util.loadImage
 
-class HomeImageAdapter :
+typealias  clickManger= (image: ImageItem) -> Unit
+class HomeImageAdapter(val clickHandler: clickManger) :
     ListAdapter<ImageItem, HomeImageAdapter.ItemHolder>(ImageDiffCallback) {
 
     inner class ItemHolder(private val binding: ImageItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(imageItem: ImageItem)= binding.apply{
             title.text = imageItem.author
             image.loadImage(receiver = root, data = imageItem.downloadUrl, isRoundedCorner = true)
+            itemView.setOnClickListener{
+                clickHandler(imageItem)
+            }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {

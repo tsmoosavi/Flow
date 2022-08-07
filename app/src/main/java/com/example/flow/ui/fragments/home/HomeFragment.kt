@@ -1,22 +1,21 @@
 package com.example.flow.ui.fragments.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.example.data.network.util.Cause
 import com.example.data.network.util.NetworkResult
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
 import com.example.flow.model.ImageItem
-import com.example.util.*
+import com.example.util.gone
+import com.example.util.loadImage
+import com.example.util.showErrorMessage
+import com.example.util.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -43,9 +42,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             vm.imageList.collect {
                 when (it) {
-                    is NetworkResult.Error -> errorManager(it.cause)
-                    is NetworkResult.Loading -> loadingStatus()
+                    is NetworkResult.Error -> {
+                        binding.loadingView.onError()
+                        errorManager(it.cause)
+                    }
+                    is NetworkResult.Loading -> {
+                        binding.loadingView.onLoading()
+                        loadingStatus()
+                    }
+
                     is NetworkResult.Success -> {
+                        if (it.data.isNullOrEmpty())
+                            binding.loadingView.onEmpty()
+                        else
+                            binding.loadingView.onSuccess()
                         adapter.submitList(it.data)
                         successfulStatus()
                         binding.image.loadImage(

@@ -34,7 +34,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
         init()
-        clickListener()
         collects()
     }
 
@@ -43,21 +42,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             vm.imageList.collect {
                 when (it) {
                     is NetworkResult.Error -> {
-                        binding.loadingView.onError()
-                        errorManager(it.cause)
+                        binding.loadingView.onError {
+                            vm.fetchItems()
+                        }
+                        binding.imageRecycler.gone()
+                        showErrorMessage(it.cause)
                     }
                     is NetworkResult.Loading -> {
                         binding.loadingView.onLoading()
-                        loadingStatus()
+                        binding.imageRecycler.gone()
+
                     }
 
                     is NetworkResult.Success -> {
-                        if (it.data.isNullOrEmpty())
-                            binding.loadingView.onEmpty()
-                        else
-                            binding.loadingView.onSuccess()
+                        binding.loadingView.onSuccessOrEmpty(it.data.isNullOrEmpty())
                         adapter.submitList(it.data)
-                        successfulStatus()
+                        binding.imageRecycler.visible()
                         binding.image.loadImage(
                             receiver = requireContext(),
                             data = it.data?.firstOrNull()?.downloadUrl,
@@ -69,11 +69,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun clickListener() {
-        binding.retryButton.setOnClickListener {
-            vm.fetchItems()
-        }
-    }
 
     private fun init() = binding.apply {
         imageRecycler.adapter = adapter
@@ -86,24 +81,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = null
     }
 
-    private fun errorManager(cause: Cause?) {
-        binding.loadingAnimation.gone()
-        binding.retryButton.visible()
-        binding.imageRecycler.gone()
-        showErrorMessage(cause)
-    }
-
-    private fun loadingStatus() {
-        binding.loadingAnimation.visible()
-        binding.retryButton.gone()
-        binding.imageRecycler.gone()
-    }
-
-    private fun successfulStatus() {
-        binding.loadingAnimation.gone()
-        binding.retryButton.gone()
-        binding.imageRecycler.visible()
-    }
 
     private fun goToDetailFragment(image: ImageItem) {
         val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(image)

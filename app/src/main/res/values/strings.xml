@@ -4,5 +4,6 @@
     <string name="default_error_message">no internet</string>
     <string name="network_exception">http Exception</string>
     <string name="no_result">no result</string>
+    <string name="empty_list">there is no record</string>
 
 </resources>

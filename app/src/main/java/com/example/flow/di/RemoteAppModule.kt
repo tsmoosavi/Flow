@@ -1,8 +1,11 @@
 package com.example.flow.di
 
 import com.example.data.network.ApiService
+import com.example.data.network.deserializers.ImageItemDeserializer
+import com.example.flow.model.ImageItem
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,12 +21,13 @@ import javax.inject.Singleton
 object RemoteAppModule {
     @Singleton
     @Provides
-    fun getGson(): Gson {
-        val gson = GsonBuilder().create()
-        return gson }
+    fun getGson(): Gson = GsonBuilder().registerTypeAdapter(
+        object : TypeToken<MutableList<ImageItem>>() {}.type, ImageItemDeserializer()
+    ).create()
+
     @Singleton
     @Provides
-    fun getStatus():OkHttpClient{
+    fun getStatus(): OkHttpClient {
         val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val client = OkHttpClient.Builder().addInterceptor(logger)
             .build()
@@ -32,13 +36,14 @@ object RemoteAppModule {
 
     @Singleton
     @Provides
-    fun getRetrofit(client: OkHttpClient): Retrofit {
+    fun getRetrofit(client: OkHttpClient,gson: Gson): Retrofit {
         val retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl("https://picsum.photos/v2/")
             .client(client)
             .build()
-        return retrofit }
+        return retrofit
+    }
 
     @Singleton
     @Provides

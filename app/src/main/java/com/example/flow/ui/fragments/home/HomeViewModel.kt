@@ -21,7 +21,7 @@ class HomeViewModel @Inject constructor(private val remoteRepository: Repository
         fetchItems()
     }
 
-    fun fetchItems(){
+    fun fetchItems() {
         launchScope {
             apiCaller.send(true)
         }

@@ -113,9 +113,9 @@ inline fun <T> Flow<NetworkResult<T>>.safeCollect(
     dataView: View? = null,
     context: Context,
     scope: CoroutineScope,
-    crossinline onRetry: () -> Unit = {},
-    crossinline onError: suspend () -> Unit = {},
-    crossinline onLoading: suspend () -> Unit = {},
+    noinline onRetry: () -> Unit = {},
+    crossinline onError: () -> Unit = {},
+    crossinline onLoading: () -> Unit = {},
     crossinline onSuccess: suspend (data: T) -> Unit,
 //    isFading:Boolean
 ): Job = scope.launch {
@@ -143,11 +143,14 @@ inline fun <T> Flow<NetworkResult<T>>.safeCollect(
 
 inline fun <T> Flow<T>.collectOnScope(
     scope: CoroutineScope,
-    crossinline block: suspend (data:T) -> Unit
+    crossinline block: suspend (data: T) -> Unit
 ) = scope.launch {
     collect {
         block(it)
     }
 }
+
+fun Int?.orMinus() = this ?: -1
+fun Int?.orZero() = this ?: 0
 
 

@@ -2,8 +2,8 @@ package com.example.data.network.util
 
 
 
-sealed class NetworkResult<T> (val data: T? = null, var cause: Cause? = null ){
-   class Success<T>(data:T):NetworkResult<T>(data)
-   class Error<T>(cause: Cause?):NetworkResult<T>(cause = cause)
-   class Loading<T>:NetworkResult<T>()
+sealed class NetworkResult<out T> (val data: T? = null){
+   class Success<out T>(data:T):NetworkResult<T>(data)
+   class Error(val cause: Cause?):NetworkResult<Nothing>()
+   class Loading<out T>:NetworkResult<T>()
 }

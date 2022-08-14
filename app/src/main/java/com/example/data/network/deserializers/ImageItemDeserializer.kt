@@ -1,5 +1,8 @@
 package com.example.data.network.deserializers
 
+import com.example.data.network.deserializers.utils.safeGet
+import com.example.data.network.deserializers.utils.safeGetInt
+import com.example.data.network.deserializers.utils.safeGetString
 import com.example.flow.model.ImageItem
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -16,9 +19,9 @@ class ImageItemDeserializer : JsonDeserializer<List<ImageItem>> {
             it.asJsonObject
         }?.map {
             ImageItem(
-                author = it.get("author").asString,
-                downloadUrl = it.get("download_url").asString,
-                height = it.get("height").asInt,
+                author = it.safeGet(memberName = "author")?.asString ?: "nothing",
+                downloadUrl = it.safeGetString(memberName = "download_url").ifBlank { "nothing" },
+                height = it.safeGetInt(memberName = "height"),
                 width = it.get("width").asInt,
                 id = it.get("id").asString,
                 url = it.get("url").asString

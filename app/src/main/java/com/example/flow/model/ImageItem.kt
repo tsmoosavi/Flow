@@ -7,16 +7,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ImageItem(
-    @SerializedName("author")
-    val author: String?,
-    @SerializedName("download_url")
-    val downloadUrl: String?,
-    @SerializedName("height")
-    val height: Int?,
-    @SerializedName("id")
-    val id: String?,
-    @SerializedName("url")
-    val url: String?,
-    @SerializedName("width")
-    val width: Int?
-): Parcelable
+    val author: String,
+    val downloadUrl: String,
+    val height: Int,
+    val id: String,
+    val url: String,
+    val width: Int,
+) : Parcelable

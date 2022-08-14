@@ -4,19 +4,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.data.network.util.Cause
-import com.example.data.network.util.NetworkResult
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
 import com.example.flow.model.ImageItem
-import com.example.util.gone
+import com.example.util.collectOnScope
+import com.example.util.launchScope
 import com.example.util.loadImage
-import com.example.util.showErrorMessage
-import com.example.util.visible
+import com.example.util.safeCollect
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -37,38 +34,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         collects()
     }
 
-    private fun collects() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            vm.imageList.collect {
-                when (it) {
-                    is NetworkResult.Error -> {
-                        binding.loadingView.onError {
-                            vm.fetchItems()
-                        }
-                        binding.imageRecycler.gone()
-                        showErrorMessage(it.cause)
-                    }
-                    is NetworkResult.Loading -> {
-                        binding.loadingView.onLoading()
-                        binding.imageRecycler.gone()
+    private fun collects() = launchScope {
+        vm.imageList.safeCollect(
+            loadingView = binding.loadingView,
+            dataView = binding.imageRecycler,
+            context = requireContext(),
+            scope = this,
+            onRetry = { vm.fetchItems() }
+        ) {
+            binding.image.loadImage(
+                receiver = requireContext(),
+                data = it.firstOrNull()?.downloadUrl,
+                isCircular = true
+            )
+            adapter.submitList(it)
+        }
+        vm.imageList.collectOnScope(this){
 
-                    }
+        }
+        vm.imageList.collectOnScope(this){
 
-                    is NetworkResult.Success -> {
-                        binding.loadingView.onSuccessOrEmpty(it.data.isNullOrEmpty())
-                        adapter.submitList(it.data)
-                        binding.imageRecycler.visible()
-                        binding.image.loadImage(
-                            receiver = requireContext(),
-                            data = it.data?.firstOrNull()?.downloadUrl,
-                            isCircular = true
-                        )
-                    }
-                }
-            }
         }
     }
-
 
     private fun init() = binding.apply {
         imageRecycler.adapter = adapter

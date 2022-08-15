@@ -8,12 +8,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
 import com.example.flow.model.ImageItem
-import com.example.util.collectOnScope
 import com.example.util.launchScope
 import com.example.util.loadImage
 import com.example.util.safeCollect
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -48,12 +46,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 isCircular = true
             )
             adapter.submitList(it)
-        }
-        vm.imageList.collectOnScope(this){
-
-        }
-        vm.imageList.collectOnScope(this){
-
         }
     }
 

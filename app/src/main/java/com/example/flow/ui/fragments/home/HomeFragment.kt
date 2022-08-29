@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,7 @@ import com.example.flow.databinding.FragmentHomeBinding
 import com.example.flow.model.ImageItem
 import com.example.util.collectOnScope
 import com.example.util.repeatOnScope
+import com.example.util.textOrEmpty
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,6 +44,9 @@ class HomeFragment : androidx.fragment.app.Fragment(R.layout.fragment_home) {
     }
 
     private fun listener()= binding.apply {
+        eT.addTextChangedListener {
+            vm.name = it.textOrEmpty()
+        }
         image.setOnClickListener {
             if (vm.isNightMode){
                 vm.isNightMode = false
@@ -113,6 +118,7 @@ class HomeFragment : androidx.fragment.app.Fragment(R.layout.fragment_home) {
 
     private fun init() = binding.apply {
         imageRecycler.adapter = adapter
+//        eT.setText(vm.name)
     }
 
 

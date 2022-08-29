@@ -1,5 +1,6 @@
 package com.example.flow.ui.fragments.home
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.Repository
@@ -11,9 +12,16 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val remoteRepository: Repository) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val remoteRepository: Repository,
+    private val saveState: SavedStateHandle) : ViewModel() {
 
-    var isNightMode:Boolean  = false
+    var name: String = saveState.get<String>("name").orEmpty()
+    set(value) {
+        field = value
+        saveState["name"] = value
+    }
+    var isNightMode: Boolean = false
     private val apiCaller = Channel<Boolean>()
     val imageList = apiCaller.receiveAsFlow().flatMapLatest {
         remoteRepository.getImageList()

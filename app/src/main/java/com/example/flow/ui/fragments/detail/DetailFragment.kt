@@ -1,5 +1,6 @@
 package com.example.flow.ui.fragments.detail
 
+import android.app.Fragment
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
@@ -25,6 +26,9 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         binding.title.addTextChangedListener {
             vm.title = it.textOrEmpty()
         }
+//        binding.title click{
+//            Toast.makeText(requireContext(), binding.title.text, Toast.LENGTH_SHORT).show()
+//        }
     }
 
     private fun init() {

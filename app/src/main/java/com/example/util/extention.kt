@@ -2,17 +2,18 @@
 
 package com.example.util
 
+
 import android.content.Context
 import android.text.Editable
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -27,8 +28,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 fun View.visible() {
     isVisible = true
@@ -46,25 +45,18 @@ fun Fragment.showToastMessage(message: String) {
     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 }
 
-fun Fragment.showErrorMessage(cause: Cause?) {
+fun androidx.fragment.app.Fragment.showErrorMessage(cause: Cause?) {
     requireContext().showErrorMessage(cause)
 }
 
-fun Context.showErrorMessage(cause: Cause?) {
+
+fun Context.showErrorMessage(cause:Cause?){
     val message = cause?.msg?.ifBlank { getString(cause.msgResId) }
         ?: getString(R.string.default_error_message)
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
-
-inline fun ViewModel.launchScope(crossinline block: suspend CoroutineScope.() -> Unit): Job {
+inline fun ViewModel.launchScope(crossinline  block: suspend CoroutineScope.() -> Unit): Job {
     return viewModelScope.launch { block() }
-}
-
-inline fun Fragment.launchScope(
-    context: CoroutineContext = EmptyCoroutineContext,
-    crossinline block: suspend CoroutineScope.() -> Unit,
-): Job {
-    return viewLifecycleOwner.lifecycleScope.launch(context) { block() }
 }
 
 fun <T, F> ImageView.loadImage(
@@ -86,29 +78,25 @@ fun <T, F> ImageView.loadImage(
             if (placeholder != null) placeholder(placeholder)
             if (errorPicture != null) error(errorPicture)
             if (isCircular) circleCrop()
-            if (isCrossFade) transition(
-                DrawableTransitionOptions.withCrossFade(
-                    defaultCrossFadeDuration
-                )
-            )
+            if (isCrossFade) transition(DrawableTransitionOptions.withCrossFade(defaultCrossFadeDuration))
             if (isRoundedCorner) transform(RoundedCorners(defaultRoundCorner))
         }
         .into(this)
 }
 
-fun <T> T?.safe(): T = checkNotNull(this)
+fun <T> T?.safe():T = checkNotNull(this)
 
-fun <T> T?.isNotNull(): Boolean {
+fun <T> T?.isNotNull():Boolean{
     contract {
-        returns(true) implies (this@isNotNull != null)
+        returns(true) implies(this@isNotNull != null)
     }
-    return this != null
+    return  this != null
 }
 
-fun Editable?.textOrEmpty(): String = this?.toString().orEmpty()
-fun EditText?.textOrEmpty(): String = this?.text.textOrEmpty()
+fun Editable?.textOrEmpty():String = this?.toString().orEmpty()
+fun EditText?.textOrEmpty():String = this?.text.textOrEmpty()
 
-inline fun <T> Flow<NetworkResult<T>>.safeCollect(
+inline fun <T> Flow<NetworkResult<T>>.safeCollectOnScope(
     loadingView: LoadingView? = null,
     dataView: View? = null,
     context: Context,

@@ -96,7 +96,7 @@ class LoadingView(context: Context, attr: AttributeSet) :
     * 1. pagination 4h -> 2 session
     * 2. data store 3h ->1.5 s
     * 3. coil 10m -> ignore!!:)
-    * 4. deserializer 2h -> 1 s
+    *
     * 5. sateFlow / sharedFlow 6h -> 3 s
     * 6.intermediate operators of flow :too much 8h -> 4 s
     * 7. custom view 4h -> 2 s

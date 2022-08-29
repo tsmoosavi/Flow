@@ -2,19 +2,21 @@ package com.example.flow.ui.fragments.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.flow.R
 import com.example.flow.databinding.FragmentHomeBinding
 import com.example.flow.model.ImageItem
+import com.example.util.collectOnScope
 import com.example.util.launchScope
 import com.example.util.loadImage
-import com.example.util.safeCollect
+import com.example.util.safeCollectOnScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : androidx.fragment.app.Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -32,8 +34,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         collects()
     }
 
-    private fun collects() = launchScope {
-        vm.imageList.safeCollect(
+    private fun collects() = viewLifecycleOwner.lifecycleScope.launch{
+        vm.imageList.safeCollectOnScope(
             loadingView = binding.loadingView,
             dataView = binding.imageRecycler,
             context = requireContext(),
@@ -47,6 +49,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             )
             adapter.submitList(it)
         }
+        vm.secondImageList.collectOnScope(
+            this
+        ){}
     }
 
     private fun init() = binding.apply {

@@ -1,10 +1,8 @@
 package com.example.flow.ui.fragments.detail
 
-import android.app.Fragment
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.flow.R
 import com.example.flow.databinding.FragmentDetailBinding
@@ -14,7 +12,7 @@ import com.example.util.textOrEmpty
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DetailFragment : Fragment(R.layout.fragment_detail) {
+class DetailFragment : androidx.fragment.app.Fragment(R.layout.fragment_detail) {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
     private val vm: DetailViewModel by viewModels()
